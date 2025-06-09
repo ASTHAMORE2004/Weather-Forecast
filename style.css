@@ -1,0 +1,393 @@
+/* Global Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    background-color: #f0f5ff;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header Styles */
+header {
+    background-color: #2c3e50;
+    color: #fff;
+    padding: 20px;
+    border-radius: 8px 8px 0 0;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    display: flex;
+    align-items: center;
+    font-size: 28px;
+    margin-bottom: 15px;
+}
+
+header h1 i {
+    margin-right: 10px;
+    color: #f1c40f;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+nav a:hover {
+    background-color: #34495e;
+}
+
+nav a.active {
+    background-color: #3498db;
+}
+
+.btn-add {
+    background-color: #27ae60;
+    padding: 8px 15px;
+}
+
+.btn-add:hover {
+    background-color: #2ecc71;
+}
+
+/* Main Content Styles */
+main {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+h2 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #ecf0f1;
+    display: flex;
+    align-items: center;
+}
+
+h2 i {
+    margin-right: 10px;
+    color: #3498db;
+}
+
+/* Table Styles */
+.forecast-table {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+thead {
+    background-color: #34495e;
+    color: #fff;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+tbody tr:hover {
+    background-color: #f5f9ff;
+}
+
+/* Weather Icons */
+.weather-icon {
+    margin-right: 10px;
+}
+
+.weather-icon-large {
+    font-size: 24px;
+    margin-right: 15px;
+}
+
+.sunny, .clear {
+    color: #f1c40f;
+}
+
+.cloudy, .overcast {
+    color: #95a5a6;
+}
+
+.rainy {
+    color: #3498db;
+}
+
+/* Action Buttons */
+.actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-view, .btn-edit, .btn-delete {
+    padding: 6px 10px;
+    border-radius: 4px;
+    color: #fff;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-view {
+    background-color: #3498db;
+}
+
+.btn-edit {
+    background-color: #f39c12;
+}
+
+.btn-delete {
+    background-color: #e74c3c;
+}
+
+.btn-view:hover {
+    background-color: #2980b9;
+}
+
+.btn-edit:hover {
+    background-color: #e67e22;
+}
+
+.btn-delete:hover {
+    background-color: #c0392b;
+}
+
+/* Form Styles */
+.form-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #34495e;
+}
+
+label i {
+    margin-right: 8px;
+    color: #3498db;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 3px rgba(52, 152, 219, 0.5);
+}
+
+.form-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: background-color 0.3s;
+}
+
+.btn i {
+    margin-right: 8px;
+}
+
+.btn-submit {
+    background-color: #27ae60;
+    color: #fff;
+}
+
+.btn-submit:hover {
+    background-color: #2ecc71;
+}
+
+.btn-cancel {
+    background-color: #7f8c8d;
+    color: #fff;
+}
+
+.btn-cancel:hover {
+    background-color: #95a5a6;
+}
+
+.btn-back {
+    background-color: #3498db;
+    color: #fff;
+}
+
+.btn-back:hover {
+    background-color: #2980b9;
+}
+
+/* Alert Styles */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+.alert-success {
+    background-color: #dff0d8;
+    color: #3c763d;
+    border: 1px solid #d6e9c6;
+}
+
+.alert-danger {
+    background-color: #f2dede;
+    color: #a94442;
+    border: 1px solid #ebccd1;
+}
+
+/* Detailed Forecast View */
+.forecast-detail {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.forecast-card {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.detail-row {
+    display: flex;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.detail-label {
+    flex: 1;
+    font-weight: 600;
+    color: #34495e;
+}
+
+.detail-label i {
+    margin-right: 10px;
+    color: #3498db;
+    width: 20px;
+    text-align: center;
+}
+
+.detail-value {
+    flex: 2;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* No Data State */
+.no-forecasts {
+    text-align: center;
+    padding: 40px 0;
+    color: #7f8c8d;
+}
+
+.no-forecasts a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.no-forecasts a:hover {
+    text-decoration: underline;
+}
+
+/* Footer Styles */
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #7f8c8d;
+    font-size: 14px;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 24px;
+    }
+    
+    nav {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    nav a {
+        text-align: center;
+    }
+    
+    .detail-row {
+        flex-direction: column;
+    }
+    
+    .detail-label {
+        margin-bottom: 5px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

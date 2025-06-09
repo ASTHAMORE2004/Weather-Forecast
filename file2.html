@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Weather Station - Weather Forecasting System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .header-container {
+            background-color: #0d6efd;
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        .weather-card {
+            transition: transform 0.3s;
+            margin-bottom: 20px;
+        }
+        .weather-card:hover {
+            transform: translateY(-5px);
+        }
+        .weather-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        .forecast-container {
+            margin-top: 40px;
+        }
+        #map-container {
+            height: 400px;
+            margin-bottom: 30px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header-container">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1><i class="fas fa-cloud-sun"></i> Weather Forecasting System</h1>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="{{ url_for('index') }}" class="btn btn-light">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Edit Weather Station Form -->
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h3><i class="fas fa-broadcast-tower"></i> Edit Weather Station</h3>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('edit_station', id=station.station_id) }}" method="post" class="needs-validation" novalidate>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="station_name" class="form-label">Station Name *</label>
+                            <input type="text" class="form-control" id="station_name" name="station_name" value="{{ station.station_name }}" required>
+                            <div class="invalid-feedback">
+                                Please enter the station name.
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="location" class="form-label">Location *</label>
+                            <input type="text" class="form-control" id="location" name="location" value="{{ station.location }}" required>
+                            <div class="invalid-feedback">
+                                Please enter the location.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="latitude" class="form-label">Latitude *</label>
+                            <input type="number" class="form-control" id="latitude" name="latitude" step="0.000001" value="{{ station.latitude }}" required>
+                            <div class="invalid-feedback">
+                                Please enter a valid latitude.
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="longitude" class="form-label">Longitude *</label>
+                            <input type="number" class="form-control" id="longitude" name="longitude" step="0.000001" value="{{ station.longitude }}" required>
+                            <div class="invalid-feedback">
+                                Please enter a valid longitude.
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="elevation" class="form-label">Elevation (m) *</label>
+                            <input type="number" class="form-control" id="elevation" name="elevation" step="0.1" value="{{ station.elevation }}" required>
+                            <div class="invalid-feedback">
+                                Please enter the elevation.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="station_type" class="form-label">Station Type *</label>
+                            <select class="form-select" id="station_type" name="station_type" required>
+                                <option value="Automated" {% if station.station_type == 'Automated' %}selected{% endif %}>Automated</option>
+                                <option value="Manual" {% if station.station_type == 'Manual' %}selected{% endif %}>Manual</option>
+                                <option value="Hybrid" {% if station.station_type == 'Hybrid' %}selected{% endif %}>Hybrid</option>
+                            </select>
+                            <div class="invalid-feedback">
+                                Please select a station type.
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="status" class="form-label">Status *</label>
+                            <select class="form-select" id="status" name="status" required>
+                                <option value="Active" {% if station.status == 'Active' %}selected{% endif %}>Active</option>
+                                <option value="Inactive" {% if station.status == 'Inactive' %}selected{% endif %}>Inactive</option>
+                                <option value="Maintenance" {% if station.status == 'Maintenance' %}selected{% endif %}>Maintenance</option>
+                                <option value="Offline" {% if station.status == 'Offline' %}selected{% endif %}>Offline</option>
+                            </select>
+                            <div class="invalid-feedback">
+                                Please select a status.
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="installation_date" class="form-label">Installation Date *</label>
+                            <input type="date" class="form-control" id="installation_date" name="installation_date" value="{{ station.installation_date }}" required>
+                            <div class="invalid-feedback">
+                                Please select an installation date.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="measurements" class="form-label">Available Measurements *</label>
+                            <div class="card p-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="temp" name="measurements[]" value="Temperature" {% if 'Temperature' in station.measurements %}checked{% endif %}>
+                                    <label class="form-check-label" for="temp">Temperature</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="humid" name="measurements[]" value="Humidity" {% if 'Humidity' in station.measurements %}checked{% endif %}>
+                                    <label class="form-check-label" for="humid">Humidity</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="pressure" name="measurements[]" value="Pressure" {% if 'Pressure' in station.measurements %}checked{% endif %}>
+                                    <label class="form-check-label" for="pressure">Atmospheric Pressure</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="wind" name="measurements[]" value="Wind" {% if 'Wind' in station.measurements %}checked{% endif %}>
+                                    <label class="form-check-label" for="wind">Wind Speed & Direction</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="precip" name="measurements[]" value="Precipitation" {% if 'Precipitation' in station.measurements %}checked{% endif %}>
+                                    <label class="form-check-label" for="precip">Precipitation</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="solar" name="measurements[]" value="Solar" {% if 'Solar' in station.measurements %}checked{% endif %}>
+                                    <label class="form-check-label" for="solar">Solar Radiation</label>
+                                </div>
+                            </div>
+                            <div class="invalid-feedback">
+                                Please select at least one measurement type.
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="8">{{ station.description }}</textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="maintenance_contact" class="form-label">Maintenance Contact</label>
+                            <input type="text" class="form-control" id="maintenance_contact" name="maintenance_contact" value="{{ station.maintenance_contact }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="reporting_frequency" class="form-label">Reporting Frequency (minutes) *</label>
+                            <input type="number" class="form-control" id="reporting_frequency" name="reporting_frequency" min="1" value="{{ station.reporting_frequency }}" required>
+                            <div class="invalid-feedback">
+                                Please enter a valid reporting frequency.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('stations') }}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Update Station
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Station Calibration Data -->
+        <div class="card mb-4 mt-4">
+            <div class="card-header bg-info text-white">
+                <h3><i class="fas fa-sliders-h"></i> Calibration Data</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-light">
+                                <h5><i class="fas fa-chart-line"></i> Calibration History</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Technician</th>
+                                                <th>Status</th>
+                                                <th>Notes</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% if station.calibrations %}
+                                                {% for cal in station.calibrations %}
+                                                <tr>
+                                                    <td>{{ cal.date }}</td>
+                                                    <td>{{ cal.technician }}</td>
+                                                    <td>
+                                                        {% if cal.status == 'Pass' %}
+                                                        <span class="badge bg-success">Pass</span>
+                                                        {% elif cal.status == 'Fail' %}
+                                                        <span class="badge bg-danger">Fail</span>
+                                                        {% else %}
+                                                        <span class="badge bg-warning">Pending</span>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>{{ cal.notes }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            {% else %}
+                                                <tr>
+                                                    <td colspan="4" class="text-center">No calibration records found</td>
+                                                </tr>
+                                            {% endif %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-light">
+                                <h5><i class="fas fa-plus-circle"></i> Add New Calibration</h5>
+                            </div>
+                            <div class="card-body">
+                                <form action="{{ url_for('add_calibration', id=station.station_id) }}" method="post">
+                                    <div class="mb-3">
+                                        <label for="calibration_date" class="form-label">Date *</label>
+                                        <input type="date" class="form-control" id="calibration_date" name="calibration_date" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="technician" class="form-label">Technician *</label>
+                                        <input type="text" class="form-control" id="technician" name="technician" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="cal_status" class="form-label">Status *</label>
+                                        <select class="form-select" id="cal_status" name="cal_status" required>
+                                            <option value="Pass">Pass</option>
+                                            <option value="Fail">Fail</option>
+                                            <option value="Pending">Pending</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="notes" class="form-label">Notes</label>
+                                        <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                                    </div>
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-info">
+                                            <i class="fas fa-plus"></i> Add Calibration Record
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Station Data Visualizations -->
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h3><i class="fas fa-chart-bar"></i> Station Data Analysis</h3>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="metric" class="form-label">Metric</label>
+                        <select class="form-select" id="metric">
+                            <option value="temperature">Temperature</option>
+                            <option value="humidity">Humidity</option>
+                            <option value="pressure">Pressure</option>
+                            <option value="wind">Wind Speed</option>
+                            <option value="precipitation">Precipitation</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="time-range" class="form-label">Time Range</label>
+                        <select class="form-select" id="time-range">
+                            <option value="24h">Last 24 Hours</option>
+                            <option value="7d" selected>Last 7 Days</option>
+                            <option value="30d">Last 30 Days</option>
+                            <option value="1y">Last Year</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="aggregation" class="form-label">Aggregation</label>
+                        <select class="form-select" id="aggregation">
+                            <option value="hourly">Hourly</option>
+                            <option value="daily" selected>Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="chart-container" style="height: 400px; background-color: #f8f9fa; border-radius: 5px;">
+                    <!-- Chart would be rendered here -->
+                    <div class="d-flex justify-content-center align-items-center h-100">
+                        <div class="text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">Loading chart data...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <button class="btn btn-sm btn-outline-secondary" id="download-data">
+                                    <i class="fas fa-download"></i> Download Data
+                                </button>
+                                <button class="btn btn-sm btn-outline-secondary" id="export-chart">
+                                    <i class="fas fa-file-image"></i> Export Chart
+                                </button>
+                            </div>
+                            <div>
+                                <button class="btn btn-sm btn-outline-primary" id="refresh-data">
+                                    <i class="fas fa-sync-alt"></i> Refresh Data
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Maintenance Records -->
+        <div class="card mb-4">
+            <div class="card-header bg-warning text-dark">
+                <h3><i class="fas fa-tools"></i> Maintenance Records</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Performed By</th>
+                                <th>Components</th>
+                                <th>Status</th
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <div class="container">
+            <p>© 2025 Weather Forecasting System | <a href="#" class="text-white">Terms of Service</a> | <a href="#" class="text-white">Privacy Policy</a></p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Form validation
+            const forms = document.querySelectorAll('.needs-validation');
+            Array.prototype.slice.call(forms).forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    } else {
+                        event.preventDefault();
+                        // Simulate getting weather data
+                        getWeatherData();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+
+            // Get user's location
+            document.getElementById('locate-me').addEventListener('click', function() {
+                showAlert('Accessing your location...', 'info');
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        function(position) {
+                            // Simulate reverse geocoding
+                            document.getElementById('location').value = 'New York City'; // This would normally use the coordinates
+                            showAlert('Location found!', 'success');
+                        },
+                        function(error) {
+                            showAlert('Unable to access your location: ' + error.message, 'danger');
+                        }
+                    );
+                } else {
+                    showAlert('Geolocation is not supported by your browser', 'danger');
+                }
+            });
+
+            // Weather map view toggles
+            document.querySelectorAll('#map-section .btn-group button').forEach(button => {
+                button.addEventListener('click', function() {
+                    document.querySelectorAll('#map-section .btn-group button').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    // Here you would change the map layer
+                });
+            });
+        });
+
+        // Show alert message
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alert-container');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} alert-dismissible fade show`;
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            alertContainer.appendChild(alert);
+            
+            // Auto-dismiss after 5 seconds
+            setTimeout(() => {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            }, 5000);
+        }
+
+        // Simulate getting weather data
+        function getWeatherData() {
+            const location = document.getElementById('location').value;
+            const forecastDays = document.getElementById('forecast-days').value;
+            const units = document.getElementById('units').value;
+            
+            showAlert(`Getting weather data for ${location}...`, 'info');
+            
+            // Simulate API loading delay
+            setTimeout(() => {
+                // Show sections that were hidden
+                document.getElementById('current-weather').classList.remove('d-none');
+                document.getElementById('map-section').classList.remove('d-none');
+                document.getElementById('forecast-container').classList.remove('d-none');
+                
+                // Mock data for demonstration
+                displayCurrentWeather({
+                    temp: 22,
+                    feels_like: 23,
+                    description: 'Partly Cloudy',
+                    humidity: 65,
+                    wind_speed: 12,
+                    pressure: 1013,
+                    visibility: 10,
+                    clouds: 40,
+                    sunrise: '06:45',
+                    sunset: '19:30',
+                    icon: 'cloud-sun'
+                }, units);
+                
+                displayForecast(forecastDays, units);
+                
+                // Show random alert sometimes
+                if (Math.random() > 0.7) {
+                    displayAlert('Moderate rainfall expected tomorrow. Potential for localized flooding in low-lying areas.');
+                }
+                
+                showAlert(`Weather forecast for ${location} loaded successfully!`, 'success');
+            }, 1500);
+        }
+
+        // Display current weather
+        function displayCurrentWeather(data, units) {
+            document.getElementById('current-icon').innerHTML = `<i class="fas fa-${data.icon}"></i>`;
+            document.getElementById('current-temp').textContent = `${data.temp}° ${units === 'metric' ? 'C' : 'F'}`;
+            document.getElementById('current-desc').textContent = data.description;
+            document.getElementById('feels-like').textContent = `${data.feels_like}° ${units === 'metric' ? 'C' : 'F'}`;
+            document.getElementById('humidity').textContent = `${data.humidity}%`;
+            document.getElementById('wind-speed').textContent = `${data.wind_speed} ${units === 'metric' ? 'km/h' : 'mph'}`;
+            document.getElementById('pressure').textContent = `${data.pressure} hPa`;
+            document.getElementById('visibility').textContent = `${data.visibility} km`;
+            document.getElementById('clouds').textContent = `${data.clouds}%`;
+            document.getElementById('sunrise').textContent = data.sunrise;
+            document.getElementById('sunset').textContent = data.sunset;
+        }
+
+        // Display forecast
+        function displayForecast(days, units) {
+            const forecastRow = document.getElementById('forecast-row');
+            forecastRow.innerHTML = '';
+            
+            const weatherIcons = ['sun', 'cloud-sun', 'cloud', 'cloud-rain', 'cloud-showers-heavy', 'bolt'];
+            const weatherDescs = ['Sunny', 'Partly Cloudy', 'Cloudy', 'Light Rain', 'Heavy Rain', 'Thunderstorm'];
+            
+            // Generate days
+            for (let i = 0; i < days; i++) {
+                const date = new Date();
+                date.setDate(date.getDate() + i);
+                const day = date.toLocaleDateString('en-US', { weekday: 'short' });
+                const monthDay = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                
+                // Random weather data for demo
+                const iconIndex = Math.floor(Math.random() * weatherIcons.length);
+                const icon = weatherIcons[iconIndex];
+                const desc = weatherDescs[iconIndex];
+                const maxTemp = Math.floor(Math.random() * 10) + 20;
+                const minTemp = maxTemp - Math.floor(Math.random() * 8);
+                
+                const forecastCard = document.createElement('div');
+                forecastCard.className = 'col-6 col-md-4 col-lg';
+                forecastCard.innerHTML = `
+                    <div class="card weather-card text-center">
+                        <div class="card-body">
+                            <h5 class="card-title">${day}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">${monthDay}</h6>
+                            <div class="weather-icon">
+                                <i class="fas fa-${icon}"></i>
+                            </div>
+                            <p class="mb-1">${desc}</p>
+                            <div class="d-flex justify-content-center">
+                                <span class="text-primary me-2">${maxTemp}°</span>
+                                <span class="text-muted">${minTemp}°</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                forecastRow.appendChild(forecastCard);
+            }
+        }
+
+        // Display weather alert
+        function displayAlert(message) {
+            const alertsContainer = document.getElementById('alerts-container');
+            const alertsBody = document.getElementById('alerts-body');
+            
+            alertsContainer.classList.remove('d-none');
+            alertsBody.innerHTML = `
+                <div class="alert alert-warning mb-0">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <strong>Weather Alert:</strong> ${message}
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Forecast - Weather Database</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-cloud-sun"></i> Weather Forecast Database</h1>
+            <nav>
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('add_forecast_form') }}" class="btn-add"><i class="fas fa-plus"></i> Add New Forecast</a>
+            </nav>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <main>
+            <div class="forecast-detail">
+                <h2>
+                    {% if 'Sunny' in forecast.conditions %}
+                        <i class="fas fa-sun weather-icon-large sunny"></i>
+                    {% elif 'Cloudy' in forecast.conditions %}
+                        <i class="fas fa-cloud weather-icon-large cloudy"></i>
+                    {% elif 'Rainy' in forecast.conditions %}
+                        <i class="fas fa-cloud-rain weather-icon-large rainy"></i>
+                    {% elif 'Clear' in forecast.conditions %}
+                        <i class="fas fa-sun weather-icon-large clear"></i>
+                    {% else %}
+                        <i class="fas fa-cloud-sun weather-icon-large"></i>
+                    {% endif %}
+                    Forecast for {{ forecast.location }}
+                </h2>
+                
+                <div class="forecast-card">
+                    <div class="detail-row">
+                        <div class="detail-label"><i class="fas fa-calendar"></i> Date:</div>
+                        <div class="detail-value">{{ forecast.date }}</div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-label"><i class="fas fa-thermometer-half"></i> Temperature:</div>
+                        <div class="detail-value">{{ forecast.temperature }}°C</div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-label"><i class="fas fa-tint"></i> Humidity:</div>
+                        <div class="detail-value">{{ forecast.humidity }}%</div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-label"><i class="fas fa-wind"></i> Wind Speed:</div>
+                        <div class="detail-value">{{ forecast.wind_speed }} km/h</div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-label"><i class="fas fa-cloud"></i> Conditions:</div>
+                        <div class="detail-value">{{ forecast.conditions }}</div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-label"><i class="fas fa-clock"></i> Created At:</div>
+                        <div class="detail-value">{{ forecast.created_at }}</div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <a href="{{ url_for('edit_forecast_form', id=forecast.id) }}" class="btn btn-edit"><i class="fas fa-edit"></i> Edit</a>
+                    <a href="{{ url_for('delete_forecast', id=forecast.id) }}" class="btn btn-delete" onclick="return confirm('Are you sure you want to delete this forecast?');"><i class="fas fa-trash"></i> Delete</a>
+                    <a href="{{ url_for('index') }}" class="btn btn-back"><i class="fas fa-arrow-left"></i> Back to List</a>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Weather Forecast Database Management System &copy; 2025</p>
+        </footer>
+    </div>
+</body>
+</html>

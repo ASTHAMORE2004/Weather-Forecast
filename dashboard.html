@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard - Analytics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-chart-line"></i> Weather Analytics Dashboard</h1>
+            <nav>
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('dashboard') }}" class="active">Dashboard</a>
+                <a href="{{ url_for('add_forecast_form') }}" class="btn-add"><i class="fas fa-plus"></i> Add New Forecast</a>
+            </nav>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <main>
+            <!-- Dashboard Summary Cards -->
+            <div class="dashboard-summary">
+                <div class="summary-card" id="total-forecasts-card">
+                    <div class="card-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3 id="total-forecasts">0</h3>
+                        <p>Total Forecasts</p>
+                    </div>
+                </div>
+                
+                <div class="summary-card" id="avg-temperature-card">
+                    <div class="card-icon">
+                        <i class="fas fa-thermometer-half"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3 id="avg-temperature">0°C</h3>
+                        <p>Average Temperature</p>
+                    </div>
+                </div>
+                
+                <div class="summary-card" id="locations-count-card">
+                    <div class="card-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3 id="locations-count">0</h3>
+                        <p>Locations Tracked</p>
+                    </div>
+                </div>
+                
+                <div class="summary-card" id="avg-humidity-card">
+                    <div class="card-icon">
+                        <i class="fas fa-tint"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3 id="avg-humidity">0%</h3>
+                        <p>Average Humidity</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="charts-grid">
+                <!-- Temperature Trends Chart -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-line"></i> Temperature Trends</h3>
+                        <div class="chart-controls">
+                            <select id="temperature-location-filter">
+                                <option value="all">All Locations</option>
+                            </select>
+                        </div>
+                    </div>
+                    <canvas id="temperatureChart"></canvas>
+                </div>
+
+                <!-- Weather Conditions Distribution -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-pie"></i> Weather Conditions Distribution</h3>
+                    </div>
+                    <canvas id="conditionsChart"></canvas>
+                </div>
+
+                <!-- Humidity Patterns -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-bar"></i> Humidity Patterns by Location</h3>
+                    </div>
+                    <canvas id="humidityChart"></canvas>
+                </div>
+
+                <!-- Wind Speed Analysis -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-wind"></i> Wind Speed Analysis</h3>
+                        <div class="chart-controls">
+                            <select id="wind-location-filter">
+                                <option value="all">All Locations</option>
+                            </select>
+                        </div>
+                    </div>
+                    <canvas id="windSpeedChart"></canvas>
+                </div>
+
+                <!-- Location Statistics -->
+                <div class="chart-container full-width">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-table"></i> Location Statistics</h3>
+                    </div>
+                    <div class="stats-table-container">
+                        <table id="locationStatsTable">
+                            <thead>
+                                <tr>
+                                    <th>Location</th>
+                                    <th>Total Forecasts</th>
+                                    <th>Avg Temperature (°C)</th>
+                                    <th>Avg Humidity (%)</th>
+                                    <th>Avg Wind Speed (km/h)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="locationStatsBody">
+                                <!-- Data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Weather Forecast Database Management System &copy; 2025</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>
